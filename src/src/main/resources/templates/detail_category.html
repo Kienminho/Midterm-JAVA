@@ -73,11 +73,11 @@
                             <h2 class="tit_list_hd_cate"><span>Size</span></h2>
                             <div class="clearfix clearfix-30"></div>
                             <ul class="list_hd_cate">
-                                <li><a href="">Mọi kích cỡ</a></li>
-                                <li><a href="">Cỡ nhỏ</a></li>
-                                <li><a href="">Cỡ vừa</a></li>
-                                <li><a href="">Cỡ lớn</a></li>
-                                <li><a href="">Over Size</a></li>
+                                <li><a href=""onclick="allSize()">Mọi kích cỡ</a></li>
+                                <li><a href="" onclick="sizeS()">Cỡ nhỏ</a></li>
+                                <li><a href="" onclick="sizeM()">Cỡ vừa</a></li>
+                                <li><a href="" onclick="sizeL()">Cỡ lớn</a></li>
+
                             </ul>
                             <div class="clearfix clearfix-25"></div>
                         </div>
@@ -85,8 +85,8 @@
                             <h2 class="tit_list_hd_cate"><span>Price</span></h2>
                             <div class="clearfix clearfix-30"></div>
                             <ul class="list_hd_cate">
-                                <li><a href="#" onclick="lowToHighFilter(this)">Thấp - Cao</a></li>
-                                <li><a href="#" onclick="highToLowFilter(this)">Cao - Thấp</a></li>
+                                <li><a href="" onclick="lowToHighFilter()">Thấp - Cao</a></li>
+                                <li><a href="" onclick="highToLowFilter()">Cao - Thấp</a></li>
 
                             </ul>
                             <div class="clearfix clearfix-25"></div>
@@ -133,12 +133,8 @@
                                     </div>
                                 </div>
                                 <div class="clearfix"></div>
-                                <ul class="pagination pagination_cate">
-                                    <li><a href="#">1</a></li>
-                                    <li><a href="#">2</a></li>
-                                    <li class="active"><a href="#">3</a></li>
-                                    <li><a href="#">4</a></li>
-                                    <li><a href="#">...</a></li>
+                                <ul class="page-number pagination pagination_cate">
+<!--                                    <li  onclick="gotoPage(this)"><a href="#">1</a></li>-->
                                 </ul>
                                 <div class="clearfix clearfix-40"></div>
                             </div>
