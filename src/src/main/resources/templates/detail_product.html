@@ -368,11 +368,11 @@
   var product = /*[[${productInfo}]]*/ '{}';
   var productInfo = JSON.parse(product);
   console.log(productInfo)
-  $(".name_prod_detail").text(productInfo.data.productName);
-  $(".price_prod_detail").text(productInfo.data.price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }));
-  $(".des_prod_detail").text(productInfo.data.description);
+  $(".name_prod_detail").text(productInfo.data.product.productName);
+  $(".price_prod_detail").text(productInfo.data.product.price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }));
+  $(".des_prod_detail").text(productInfo.data.product.description);
 
-  $(".image_prod_detail").attr("src", productInfo.data.imageUrl);
+  $(".image_prod_detail").attr("src", productInfo.data.product.imageUrl);
 </script>
 </body>
 

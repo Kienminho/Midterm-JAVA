@@ -1,4 +1,5 @@
 //set trạng thái trang hiện tại
+
 $(window).on("load", function() {
     let activePageIndex = localStorage.getItem("activePageIndex");
     if (activePageIndex) {
@@ -7,37 +8,32 @@ $(window).on("load", function() {
         $(`.page-number li a:contains(${activePageIndex})`).closest("li").addClass("active");
         localStorage.clear();
     }
+
+
 });
-
-let currentProducts //số lượng sản phẩm theo category
-let productSubCategory // số lượng sản phẩm theo sub category
+let subCategory;   //danh mục con
+let currentProducts; //số lượng sản phẩm theo category
+let pageCurrentProducts;
+let productSubCategory; // số lượng sản phẩm theo sub category
 //url của trang hiện tại
-var path = window.location.pathname;
-const regex = /\/([^\/]+)\/?$/;
-var lastSegment = path.match(regex)[1];
+let path = window.location.pathname;
 
-const apiUrl = `http://localhost:8080/api/product/get-product-by-category/${lastSegment}`;
+const regex = /\/([^\/]+)\/?$/;
+let lastSegment = path.match(regex)[1];
+let pageIndex= localStorage.getItem("activePageIndex");
+//nếu pageIndex null, gán bằng 1
+pageIndex = pageIndex ?? 1;
+// url trả về sản phẩm theo phân trang
+const apiForPage = `http://localhost:8080/api/product/get-product-by-category/${lastSegment}?pageIndex=${pageIndex}`;
+
+
 //lấy thẻ div chứa các sản phẩm
 const divWapper = $(".row_13");
 
-//fetch data theo category - v1
-// async function fetchDataFromApi(apiUrl) {
-//     try {
-//         const response = await fetch(apiUrl);
-//
-//         if (!response.ok) {
-//             throw new Error('Network response was not ok');
-//         }
-//
-//         return await response.json();
-//     } catch (error) {
-//         console.error('Error fetching data:', error);
-//         throw error;
-//     }
-// }
 
-//fetch data theo category
-fetch(apiUrl)
+
+//fetch data theo category and pageIndex
+fetch(apiForPage)
     .then(response => {
         if (!response.ok) {
             throw new Error(`Network response was not ok: ${response.statusText}`);
@@ -45,15 +41,16 @@ fetch(apiUrl)
         return response.json();
     })
     .then(data => {
+        console.log(data)
         // Lưu dữ liệu vào biến globalData
-        currentProducts = data.data;
-        console.log(currentProducts);
-        numberPage(Math.ceil(currentProducts.length/9));
+        pageCurrentProducts = data.data.pageListProduct;
+        currentProducts = data.data.listByCategory;
+        numberPage(Math.ceil(data.totalRecords/9));
         //console.log(Math.ceil(currentProducts.length/9));
     })
     .catch(error => {
         // Xử lý lỗi ở đây
-        console.error('Fetch error:', error);
+        console.log('Fetch error:'+  error);
     });
 
 
@@ -64,7 +61,7 @@ fetch(apiUrl)
 async function getProductBySubCategory(element) {
     event.preventDefault();
     //subCategory
-    let subCategory = element.getAttribute("href").match(regex)[1];
+    subCategory = element.getAttribute("href").match(regex)[1];
     console.log(subCategory);
     // const dataAPI =  await fetchDataFromApi(apiUrl);
     // currentProducts = dataAPI.data;
@@ -73,7 +70,6 @@ async function getProductBySubCategory(element) {
     $(".sub-category").removeClass("is-active-sub-category");
     // thêm vào phần tử vừa click
     $(element).addClass("is-active-sub-category");
-
     //data theo subcategory
     productSubCategory = currentProducts.filter(p =>  p.subCategory === subCategory);
     //tính toán số page
@@ -81,43 +77,112 @@ async function getProductBySubCategory(element) {
     displayProduct(productSubCategory);
 }
 
-function lowToHighFilter() {
+/*function lowToHighFilter() {
     event.preventDefault();
-    productSubCategory.sort((a,b) => a.price - b.price);
-    displayProduct(productSubCategory);
+    if(subCategory != null) {
+        productSubCategory.sort((a,b) => a.price - b.price);
+        displayProduct(productSubCategory);
+    }
+    else {
+        pageCurrentProducts.sort((a,b) =>a.price - b.price);
+        displayProduct(pageCurrentProducts);
+    }
+
+
 }
 
 function highToLowFilter() {
+    event.preventDefault()
+    if(subCategory != null) {
+        productSubCategory.sort((a,b) => b.price - a.price);
+        displayProduct(productSubCategory);
+    }
+    else {
+        pageCurrentProducts.sort((a,b) =>b.price - a.price);
+        displayProduct(pageCurrentProducts);
+    }
+
+}*/
+
+//sort theo giá
+function applyFilter(filterType) {
     event.preventDefault();
-    productSubCategory.sort((a,b) => b.price - a.price);
-    displayProduct(productSubCategory);
+    let productsToDisplay = subCategory ? productSubCategory : pageCurrentProducts;
+
+    switch (filterType) {
+        case 'lowToHigh':
+            productsToDisplay.sort((a, b) => a.price - b.price);
+            break;
+        case 'highToLow':
+            productsToDisplay.sort((a, b) => b.price - a.price);
+            break;
+        // Thêm các loại filter khác
+        default:
+            break;
+    }
+
+    displayProduct(productsToDisplay);
 }
 
 //sort theo size
-
-function allSize() {
+function filterBySize(size, event) {
     event.preventDefault();
-    displayProduct(productSubCategory);
+    console.log(subCategory)
+    let productsToDisplay = subCategory ? productSubCategory : pageCurrentProducts;
+    if(size !== "all")
+        productsToDisplay = productsToDisplay.filter(p => p.size === size);
+    console.log(productsToDisplay)
+    displayProduct(productsToDisplay);
+}
+
+//các sự kiện click
+$('.low-to-high-filter').click(() => applyFilter('lowToHigh'));
+$('.high-to-low-filter').click(() => applyFilter('highToLow'));
+$('.all-size-filter').click(event => filterBySize('all', event));
+$('.size-s-filter').click(event => filterBySize('S', event));
+$('.size-m-filter').click(event => filterBySize('M', event));
+$('.size-l-filter').click(event => filterBySize('L', event));
+
+
+/*function allSize() {
+    event.preventDefault();
+    if(subCategory != null)
+        displayProduct(productSubCategory);
+    else
+        displayProduct(pageCurrentProducts);
 }
 function sizeS() {
-    console.log(1111)
+    let productSizeS;
     event.preventDefault();
-    const productSizeS = productSubCategory.filter(p => p.size ==="S");
+    if(subCategory != null)
+        productSizeS = productSubCategory.filter(p => p.size ==="S")
+    else
+        productSizeS = pageCurrentProducts.filter(p => p.size ==="S");
+
+
     displayProduct(productSizeS);
 
 }
 function sizeM() {
+    let productSizeM;
     event.preventDefault();
-    const productSizeM = productSubCategory.filter(p => p.size ==="M");
+    if(subCategory != null)
+        productSizeM = productSubCategory.filter(p => p.size ==="M")
+    else
+        productSizeM = pageCurrentProducts.filter(p => p.size ==="M");
     displayProduct(productSizeM);
 
 }
 function sizeL() {
+    let productSizeL;
     event.preventDefault();
-    const productSizeL = productSubCategory.filter(p => p.size ==="L");
+    if(subCategory != null)
+        productSizeL = productSubCategory.filter(p => p.size ==="L")
+    else
+        productSizeL = pageCurrentProducts.filter(p => p.size ==="L");
     displayProduct(productSizeL);
 
-}
+}*/
 
 
 
@@ -158,6 +223,8 @@ function goToPage(element) {
 
 //tính toán số trang
 //nếu number== 1 thì chỉ có một trang
+
+//chia trang trang cho sản phẩm theo sub Category
 function numberPage(number) {
     let li;
     const wrapperLi = $(".page-number");
@@ -179,7 +246,4 @@ function numberPage(number) {
 
 }
 
-
-
-//chia trang trang cho sản phẩm theo sub Category
 

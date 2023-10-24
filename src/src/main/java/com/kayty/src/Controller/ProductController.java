@@ -28,6 +28,7 @@ public class ProductController {
         String apiUrl = "http://localhost:8080/api/product/get-detail/" + id;
         RestTemplate restTemplate = new RestTemplate();
         String productInfo = restTemplate.getForObject(apiUrl, String.class);
+        System.out.println(productInfo);
         // Truyền dữ liệu đến template Thymeleaf
         model.addAttribute("productInfo", productInfo);
 

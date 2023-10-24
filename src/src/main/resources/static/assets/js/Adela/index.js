@@ -19,7 +19,8 @@ const divWapper = $(".row_13");
 fetch("http://localhost:8080/api/product/get-bestsale-product")
 .then(res => res.json())
 .then(res => {
-    res.data.map(product => {
+    console.log(res)
+    res.data.list.map(product => {
         const div = `<div class="col-md-4 col-sm-4 col-xs-6 col-480-12">
                             <div class="row_2">
                                 <div class="box_prod clearfix">
