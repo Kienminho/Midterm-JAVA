@@ -1,6 +1,8 @@
 package com.kayty.src.Helps;
 
 import lombok.Getter;
+
+import java.util.HashMap;
 import java.util.Map;
 
 @Getter
@@ -9,6 +11,8 @@ public class Response<T> {
     private String message;
     private int totalRecords;
     private Map<String, T> data;
+
+
 
     public Response(int statusCode, String message, int totalRecords, Map<String, T> data) {
         this.statusCode = statusCode;
@@ -31,11 +35,13 @@ public class Response<T> {
         this.message = message;
     }
 
-    public void setData(Map<String, T> data) {
-        this.data = data;
+
+    public  void setTotalRecords(int totalRecords) {
+        this.totalRecords = totalRecords;
     }
 
-    public void setTotalRecords(int totalRecords) {
-        this.totalRecords = totalRecords;
+
+    public void setData(Map<String, T> data) {
+        this.data = data;
     }
 }

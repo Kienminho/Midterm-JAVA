@@ -26,9 +26,12 @@ public class ProductDAO implements Repository {
     private final String GET_BEST_SALE_PRODUCT = "SELECT NEW  com.kayty.src.Model.Product(p.id, p.productName, p.imageUrl, p.category, p.subCategory, p.price, p.size) FROM Product p ";
 
     private final String GET_PRODUCT_BY_ID = "SELECT NEW  com.kayty.src.Model.Product(p.id, p.productName, p.imageUrl, p.category, p.description, p.subCategory, p.price, p.size) FROM Product p WHERE p.id = :id";
-    private final String GET_PRODUCT_BY_CATEGORY = "SELECT NEW  com.kayty.src.Model.Product(p.id, p.productName, p.imageUrl, p.category, p.subCategory, p.price, p.size) FROM Product p WHERE p.category = :category";
+    private String GET_PRODUCT_BY_CATEGORY = "SELECT NEW  com.kayty.src.Model.Product(p.id, p.productName, p.imageUrl, p.category, p.subCategory, p.price, p.size) FROM Product p WHERE p.category = :category";
+
+    private String  GET_PRODUCT_BY_NAME = "SELECT NEW com.kayty.src.Model.Product(p.id, p.productName, p.imageUrl, p.category, p.subCategory, p.price, p.size) FROM Product p WHERE p.productName LIKE CONCAT('%', :keyword, '%')";
     private final String GET_PRODUCT_BY_SUB_CATEGORY = "SELECT NEW  com.kayty.src.Model.Product(p.id, p.productName, p.imageUrl, p.category, p.subCategory, p.price, p.size) FROM Product p WHERE p.subCategory = :subCategory";
     private final String GET_SUB_CATEGORY = "SELECT p.subCategory FROM Product p WHERE p.category = :category GROUP BY p.subCategory";
+
     @Override
     public Object add(Object item) {
         return null;
@@ -46,8 +49,11 @@ public class ProductDAO implements Repository {
     }
 
     @Override
-    public List getAll() {
-        return null;
+    public List getListSearch(String keyword) {
+        Query query = entityManager.createQuery(GET_PRODUCT_BY_NAME);
+        query.setParameter("keyword", keyword);
+        List list = query.getResultList();
+        return list;
     }
 
     public List getBestSaleProduct() {
@@ -61,12 +67,14 @@ public class ProductDAO implements Repository {
     public List getProductByCategory(String category) {
         Query query = entityManager.createQuery(GET_PRODUCT_BY_CATEGORY);
         query.setParameter("category", category);
+
         List listProduct = query.getResultList();
         return  listProduct;
 
     }
 
     public List getSubCategory(String category) {
+
         Query query = entityManager.createQuery(GET_SUB_CATEGORY);
         query.setParameter("category", category);
         List subCategorys = query.getResultList();

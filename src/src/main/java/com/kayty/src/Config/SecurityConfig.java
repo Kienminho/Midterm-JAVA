@@ -18,7 +18,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/","/info", "/contact", "/home", "/assets/**", "/auth/register", "/api/product/**","/product/**", "/images/**").permitAll()
+                        .requestMatchers("/","/info", "/contact","/searchs", "/home", "/assets/**", "/auth/register", "/api/product/**","/product/**", "/images/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
@@ -30,16 +30,4 @@ public class SecurityConfig {
         return http.build();
     }
 
-
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        UserDetails user =
-//                User.withDefaultPasswordEncoder()
-//                        .username("user")
-//                        .password("password")
-//                        .roles("USER")
-//                        .build();
-//
-//        return new InMemoryUserDetailsManager(user);
-//    }
 }

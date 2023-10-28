@@ -30,7 +30,7 @@ public class UserDAO implements Repository {
     }
 
     @Override
-    public List getAll() {
+    public List getListSearch(String keyword) {
         return null;
     }
 

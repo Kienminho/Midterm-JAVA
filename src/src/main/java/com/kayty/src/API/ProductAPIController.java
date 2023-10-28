@@ -38,8 +38,8 @@ public class ProductAPIController {
     }
 
     @GetMapping("/get-product-by-category/{category}")
-    public Response<List<Product>> getListProductByCategory(@PathVariable String category, @RequestParam(defaultValue = "1") Integer pageIndex) {
-
+    public Response<List<Product>> getListProductByCategory(@PathVariable String category, @RequestParam(defaultValue = "1") Integer pageIndex)
+    {
         List<Product> limitedList;
         List<Product> listByCategory = productDAO.getProductByCategory(category);
         //vị trí bắt đầu lấy sản phâm
@@ -66,6 +66,28 @@ public class ProductAPIController {
         Map<String, List<Product>> data = new HashMap<>();
         data.put("list", list);
         return new Response<>(200, "Successful", data);
+    }
+
+    @GetMapping("/get-list-search")
+    public Response<List<Product>> getListListSearch(@RequestParam String keywords, @RequestParam(defaultValue = "1") Integer pageIndex) {
+        System.out.println((keywords));
+        List<Product> limitedList;
+        List<Product> listSearch = productDAO.getListSearch(keywords);
+        //vị trí bắt đầu lấy sản phâm
+        int from = 0;
+        if(pageIndex !=1) {
+            from = (pageIndex - 1) * 9;
+            // Giới hạn danh sách chỉ có 9 phần tử
+
+        }
+        limitedList = listSearch.stream().skip(from).limit(9)
+                .collect(Collectors.toList());
+        //lấy sub_category
+        Map<String, List<Product>> data  = new HashMap<>();
+        data.put("pageListProduct", limitedList);
+        data.put("listSearch", listSearch);
+
+        return new Response<>(200, "Successful", listSearch.size(), data);
     }
 
 

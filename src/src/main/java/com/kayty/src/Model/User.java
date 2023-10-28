@@ -22,6 +22,9 @@ public class User {
     private String password;
 
     @Column
+    private String role;
+
+    @Column
     @CreationTimestamp
     private LocalDateTime createdDate;
 

@@ -1,5 +1,5 @@
 //set trạng thái trang hiện tại
-
+// khi trang load xog
 $(window).on("load", function() {
     let activePageIndex = localStorage.getItem("activePageIndex");
     if (activePageIndex) {
@@ -8,15 +8,16 @@ $(window).on("load", function() {
         $(`.page-number li a:contains(${activePageIndex})`).closest("li").addClass("active");
         localStorage.clear();
     }
-
-
 });
+
+//các biến cần thiết
 let subCategory;   //danh mục con
 let currentProducts; //số lượng sản phẩm theo category
 let pageCurrentProducts;
 let productSubCategory; // số lượng sản phẩm theo sub category
 //url của trang hiện tại
 let path = window.location.pathname;
+
 
 const regex = /\/([^\/]+)\/?$/;
 let lastSegment = path.match(regex)[1];
@@ -58,7 +59,7 @@ fetch(apiForPage)
 
 
 //lấy sub category
-async function getProductBySubCategory(element) {
+function getProductBySubCategory(element) {
     event.preventDefault();
     //subCategory
     subCategory = element.getAttribute("href").match(regex)[1];
@@ -142,50 +143,6 @@ $('.all-size-filter').click(event => filterBySize('all', event));
 $('.size-s-filter').click(event => filterBySize('S', event));
 $('.size-m-filter').click(event => filterBySize('M', event));
 $('.size-l-filter').click(event => filterBySize('L', event));
-
-
-/*function allSize() {
-    event.preventDefault();
-    if(subCategory != null)
-        displayProduct(productSubCategory);
-    else
-        displayProduct(pageCurrentProducts);
-}
-function sizeS() {
-    let productSizeS;
-    event.preventDefault();
-    if(subCategory != null)
-        productSizeS = productSubCategory.filter(p => p.size ==="S")
-    else
-        productSizeS = pageCurrentProducts.filter(p => p.size ==="S");
-
-
-    displayProduct(productSizeS);
-
-}
-function sizeM() {
-    let productSizeM;
-    event.preventDefault();
-    if(subCategory != null)
-        productSizeM = productSubCategory.filter(p => p.size ==="M")
-    else
-        productSizeM = pageCurrentProducts.filter(p => p.size ==="M");
-    displayProduct(productSizeM);
-
-}
-function sizeL() {
-    let productSizeL;
-    event.preventDefault();
-    if(subCategory != null)
-        productSizeL = productSubCategory.filter(p => p.size ==="L")
-    else
-        productSizeL = pageCurrentProducts.filter(p => p.size ==="L");
-    displayProduct(productSizeL);
-
-}*/
-
-
-
 
 //hiển thị sản phẩm theo filter
 function displayProduct(arr) {

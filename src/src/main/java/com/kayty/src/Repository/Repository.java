@@ -11,7 +11,7 @@ import java.util.List;
 public interface Repository <T, K>{
     T add(T item);
     T get(K id);
-    List<T> getAll();
+    List<T> getListSearch(String keyword);
     boolean deleteById(K id);
     T getByName(K name);
     boolean update(T item);
