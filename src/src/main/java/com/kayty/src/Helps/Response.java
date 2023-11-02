@@ -26,6 +26,10 @@ public class Response<T> {
         this.message = message;
         this.data = data;
     }
+    public Response(int statusCode, String message) {
+        this.statusCode = statusCode;
+        this.message = message;
+    }
 
     public void setStatusCode(int statusCode) {
         this.statusCode = statusCode;

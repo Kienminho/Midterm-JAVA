@@ -47,9 +47,6 @@
                 <li><img class="image_prod_detail"  src="/assets/img/dress_green_2_small.jpg" alt='image' /></li>
                 <li><img class="image_prod_detail"  src="/assets/img/dress_green_2.jpg" alt='image' /></li>
                 <li><img class="image_prod_detail"  src="/assets/img/dress_green_1.jpg" alt='image' /></li>
-<!--                <li><img class="image_prod_detail" src="/assets/img/dress_green_3.jpg" alt='image' /></li>-->
-<!--                <li><img class="image_prod_detail" src="/assets/img/dress_green_4.jpg" alt='image' /></li>-->
-<!--                <li><img class="image_prod_detail" src="../../images/dress_redmix_3.jpg" alt='image' /></li>-->
               </ul>
               <script src="/assets/js/jquery.glasscase.minf195.js"></script>
               <script type="text/javascript">
@@ -109,7 +106,9 @@
               </div>
               <div class="clearfix clearfix-45"></div>
               <input type="number" class="input_nb_detail" min="1" max="2000" value="1">
-              <button class="butt_add_prod_detail">Thêm Vào giỏ</button>
+
+              <button type="button" class="btn-add-product butt_add_prod_detail" onclick="addProductToCart(this.value)">Thêm Vào giỏ</button>
+
             </div>
           </div>
         </div>
@@ -373,6 +372,44 @@
   $(".des_prod_detail").text(productInfo.data.product.description);
 
   $(".image_prod_detail").attr("src", productInfo.data.product.imageUrl);
+  $(".btn-add-product").val(productInfo.data.product.id);
+
+
+
+  // add producct to shopping-cart
+  function addProductToCart(value) {
+    const quantity = $(".input_nb_detail").val();
+    const userName = $(".user-name").text();
+    if(userName === "") {
+      alert("Vui lòng đăng nhập để mua hàng.")
+      return;
+    }
+    const quantityProduct = $(".cart-count");
+    const currentQuantity = parseInt(quantityProduct.text(), 10) || 0; // Parse as integer, default to 0 if not a valid number
+    quantityProduct.text(currentQuantity + quantity);
+
+    const idProduct = value;
+    const data = {
+      idProduct: idProduct,
+      userName: userName,
+      quantity: quantity
+    }
+
+    fetch("/api/product/add-product-to-cart", {
+      method: "POST",
+      headers: {
+        'X-CSRF-TOKEN': $(".csrf").val(),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+            .then(res => res.json())
+            .then(data => {
+              console.log(data);
+            })
+            .catch(err => console.log(err))
+
+  }
 </script>
 </body>
 

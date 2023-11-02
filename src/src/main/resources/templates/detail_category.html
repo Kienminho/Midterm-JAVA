@@ -124,7 +124,7 @@
                                                         <a th:href="@{'/product/get-detail/' + ${product.id}}" th:text="${product.productName}"></a>
                                                     </h3>
                                                     <div class="clearfix clearfix-5"></div>
-                                                    <a href="#" class="add_prod_cart fadeInUp wow">Thêm vào giỏ hàng +</a>
+                                                    <a href="#" th:data-target="${product.id}" class="add_prod_cart fadeInUp wow" onclick="addProductToCart(this)">Thêm vào giỏ hàng +</a>
                                                 </div>
                                             </div>
                                         </div>

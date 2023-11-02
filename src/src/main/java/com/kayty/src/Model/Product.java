@@ -2,9 +2,14 @@ package com.kayty.src.Model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @Table
@@ -45,13 +50,18 @@ public class Product {
 
     private String size;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
 
-    @ManyToOne
-    @JoinColumn(name = "shopping_cart_id")
-    private ShoppingCart shoppingCart;
+
+//    @ManyToMany(mappedBy = "products")
+//    private Set<ShoppingCart> shoppingCarts = new HashSet<>();
+    @ManyToMany
+    @JoinTable(
+        name = "shopping_cart_product",
+        joinColumns = @JoinColumn(name = "product_id"),
+        inverseJoinColumns = @JoinColumn(name = "shopping_cart_id")
+    )
+    private Set<ShoppingCartProduct> shoppingCartProducts = new HashSet<>();
+
     public Product(Long id, String productName, String imageUrl, String category,String description, String subCategory, double price, String size) {
         this.id = id;
         this.productName = productName;
@@ -73,38 +83,9 @@ public class Product {
         this.size = size;
     }
 
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-
-    public void setSize(String size) {
-        this.size = size;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
-    public void setShoppingCart(ShoppingCart shoppingCart) {
-        this.shoppingCart = shoppingCart;
-    }
-
     public String toString() {
 
         return "Product[ "+ this.id+ ", "+this.productName+", "+this.category+", "+ this.subCategory+", "+this.price+"]";
     }
+
 }

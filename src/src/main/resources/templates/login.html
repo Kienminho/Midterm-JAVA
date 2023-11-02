@@ -37,26 +37,32 @@
         <div class="container">
             <div class="row_pc">
 
-                <form class="form_login_acc">
+                <form method="post" th:action="@{/login}" class="form_login_acc">
                     <div class="tit_login_acc">Đăng Nhập</div>
                     <div class="clearfix clearfix-30"></div>
                     <div class="group_login_input">
                         <div class="name_input_login">Số điện thoại hoặc Email *</div>
                         <div class="clearfix"></div>
-                        <input class="input_login" aria-label="">
+                        <input name="username" class="input_login" aria-label="">
                     </div>
                     <div class="clearfix"></div>
                     <div class="group_login_input">
                         <div class="name_input_login">Mật khẩu *</div>
                         <div class="clearfix"></div>
-                        <input class="input_login" aria-label="">
+                        <input type="password" name="password" class="input_login" aria-label="">
                     </div>
                     <div class="clearfix"></div>
                     <label class="checkbox-inline check_login"><input type="checkbox" value="">Lưu mật khẩu</label>
                     <a href="" class="butt_qmk">Quên mật khẩu?</a>
                     <div class="clearfix clearfix-25"></div>
-                    <button class="butt_sign_in">Sign In</button>
-                    <div class="clearfix clearfix-20"></div>
+                    <button type="submit" class="butt_sign_in">Sign In</button>
+                    <div class="clearfix clearfix-20">
+
+                    </div>
+                    <div th:if="${param.error}">
+                        <div class="alert alert-danger">Invalid Email or Password</div>
+                    </div>
+
                     <a href="/auth/register" class="or_new_pass">Hoặc TẠO TÀI KHOẢN MỚI</a>
                 </form>
 

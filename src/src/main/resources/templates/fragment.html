@@ -6,6 +6,9 @@
   <title>Adela</title>
 
   <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
   <link href="/assets/css/bootstrap.min.css" rel="stylesheet"/>
   <link href="/assets/css/font-awesome.css" rel="stylesheet"/>
   <link href="/assets/css/menu-2.css" rel="stylesheet"/>
@@ -26,6 +29,7 @@
   <script>
     new WOW().init();
   </script>
+
 </head>
 <body>
 <header th:fragment="header" id="header" class="home_header">
@@ -51,13 +55,25 @@
       <div class="row_pc">
 
         <ul class="acc_header fadeInLeft wow">
-          <li><a href="/auth/login">Đăng nhập</a></li>
-          <li><a href="/auth/register">Đăng kí</a></li>
+          <input type="hidden" class="csrf" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+          <li th:if="${#authorization.expression('isAuthenticated()')}">
+            <!-- Nếu người dùng đã đăng nhập, hiển thị username và liên kết logout -->
+            <span class="user-name" th:text="${#authentication.principal.username}"></span> |
+            <a href="/logout">Logout</a>
+          </li>
+          <li th:unless="${#authorization.expression('isAuthenticated()')}">
+            <!-- Nếu người dùng chưa đăng nhập, hiển thị liên kết đăng nhập và đăng ký -->
+            <a href="/auth/login" th:if="${not #authorization.expression('isAuthenticated()')}">Đăng nhập</a> |
+            <a href="/auth/register" th:if="${not #authorization.expression('isAuthenticated()')}">Đăng ký</a>
+          </li>
         </ul>
+
 
       </div>
     </div>
+
   </section>
+
 
 
   <section class="sc_header_main sticky-header clearfix">
@@ -103,9 +119,13 @@
                   <button type="button" onclick="searchProduct()" class="btn-search btn btn-default butt_search_hd" aria-label="Bold" >
                     <span class="fa fa-search"></span>
                   </button>
-                  <button type="button" class="btn btn-default cart_header">
-                    <img class="icon_cart" src="/assets/img/icon_cart.png" alt=""/>
-                  </button>
+                  <a class="btn btn-default cart_header" onclick="redirectShoppingCart()">
+
+                    <img class="icon_cart" src="/assets/img/icon_cart.png" alt="" >
+                    <span th:if="${session.totalQuantity != null}" class="icon_cart cart-count" th:text="${session.totalQuantity}"></span>
+                    <span th:if="${session.totalQuantity == null}" class="icon_cart cart-count">0</span>
+
+                  </a>
                 </div>
               </div>
             </div>
@@ -181,10 +201,12 @@
         </div>
       </div>
     </div>
+
   </section>
 
-  <a href="#top" id="go_top"><i class="fa fa-angle-up"></i></a>
 
+
+  <a href="#top" id="go_top"><i class="fa fa-angle-up"></i></a>
 </footer>
 
 </body>

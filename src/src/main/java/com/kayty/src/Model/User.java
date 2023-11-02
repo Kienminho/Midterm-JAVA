@@ -1,13 +1,16 @@
 package com.kayty.src.Model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
 
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @Table
@@ -21,68 +24,41 @@ public class User {
     @Column
     private String password;
 
-    @Column
-    private String role;
 
-    @Column
+    @Column(nullable = true, unique = true)
     @CreationTimestamp
     private LocalDateTime createdDate;
 
     @OneToMany(mappedBy = "user")
     private List<Order> orders;
 
-    @OneToMany(mappedBy = "user")
-    private List<ShoppingCart> shoppingCarts;
-    public User(String username, String password) {
+    @OneToOne(mappedBy = "user")
+    private ShoppingCart shoppingCarts;
+
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
+    )
+    private Set<Role> roles;
+
+
+    public User(String username, String password, Role userRole) {
         this.username = username;
         this.password = password;
+
+        this.roles = new HashSet<>(Collections.singletonList(userRole));
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setID(Long id) {
-        this.id= id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
+    public User(String username, String password, ShoppingCart shoppingCart) {
         this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
         this.password = password;
+        this.shoppingCarts = shoppingCart;
     }
 
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
+    public String toString() {
 
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
-    }
-
-    public List<ShoppingCart> getShoppingCarts() {
-        return shoppingCarts;
-    }
-
-    public void setShoppingCarts(List<ShoppingCart> shoppingCarts) {
-        this.shoppingCarts = shoppingCarts;
+        return "User["+ this.id+ ", " + this.username +", "+this.password+ ", "+this.shoppingCarts+ "]";
     }
 }

@@ -30,7 +30,7 @@ fetch("http://localhost:8080/api/product/get-bestsale-product")
                                         <div class="price_prod fadeInLeft wow">${product.price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</div>
                                         <h3 class="name_prod fadeInRight wow"><a href="">${product.productName}</a></h3>
                                         <div class="clearfix clearfix-5"></div>
-                                        <a href="" class="add_prod_cart fadeInUp wow">Thêm vào giỏ hàng +</a>
+                                        <a href="" data-target="${product.id}" class="add_prod_cart fadeInUp wow" onclick="addProductToCart(this)">Thêm vào giỏ hàng +</a>
                                     </div>
                                 </div>
                             </div>
@@ -40,3 +40,39 @@ fetch("http://localhost:8080/api/product/get-bestsale-product")
     })
 })
 .catch(err => console.log(err))
+
+
+// add product to cart
+function addProductToCart(element) {
+    event.preventDefault();
+    const userName = $(".user-name").text();
+    if(userName === "") {
+        alert("Vui lòng đăng nhập để mua hàng.")
+        return;
+    }
+    const quantityProduct = $(".cart-count");
+    const currentQuantity = parseInt(quantityProduct.text(), 10) || 0; // Parse as integer, default to 0 if not a valid number
+    quantityProduct.text(currentQuantity + 1);
+
+    const idProduct = element.dataset.target;
+    const data = {
+        idProduct: idProduct,
+        userName: userName,
+        quantity: "1"
+    }
+
+    fetch("/api/product/add-product-to-cart", {
+        method: "POST",
+        headers: {
+            'X-CSRF-TOKEN': $(".csrf").val(),
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+    })
+        .then(res => res.json())
+        .then(data => {
+            console.log(data);
+        })
+        .catch(err => console.log(err))
+
+}

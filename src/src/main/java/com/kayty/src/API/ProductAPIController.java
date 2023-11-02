@@ -1,15 +1,24 @@
 package com.kayty.src.API;
 
 import com.kayty.src.DAO.ProductDAO;
+import com.kayty.src.DAO.ShoppingCartProductDAO;
+import com.kayty.src.DAO.UserDAO;
 import com.kayty.src.Helps.Response;
 import com.kayty.src.Model.Product;
+import com.kayty.src.Model.ShoppingCart;
+import com.kayty.src.Model.ShoppingCartProduct;
+import com.kayty.src.Model.User;
+import jakarta.servlet.http.HttpServletRequest;
+import com.kayty.src.Repository.ShoppingCartProductRepository;
+import com.kayty.src.Repository.ShoppingCartRepository;
+import com.kayty.src.Repository.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import java.util.stream.Collectors;
 
 @RestController
@@ -17,6 +26,25 @@ import java.util.stream.Collectors;
 public class ProductAPIController {
     @Autowired
     private  ProductDAO productDAO = new ProductDAO();
+
+    @Autowired
+    private  UserDAO userDAO;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ShoppingCartRepository shoppingCartRepository;
+
+//    @Autowired
+//    private ShoppingCartProductDAO shoppingCartProductDAO = new ShoppingCartProductDAO();
+
+    @Autowired
+    private ShoppingCartProductRepository shoppingCartProductRepository;
+
+    @Autowired
+    private HttpServletRequest request;
+
 
     @GetMapping("/get-bestsale-product")
     public Response<List<Product>> getBestSaleProduct() {
@@ -89,6 +117,82 @@ public class ProductAPIController {
 
         return new Response<>(200, "Successful", listSearch.size(), data);
     }
+
+
+    @PostMapping("/add-product-to-cart")
+    public Response<Product> addProductToCart(@RequestBody Map<String, Object> req) {
+        try {
+            String productId = (String) req.get("idProduct");
+            String userName = (String) req.get("userName");
+            String sQuantity =  (String)req.get("quantity");
+            //convert
+            int quantity = Integer.parseInt(sQuantity);
+            System.out.println(productId + " " + userName);
+
+            User user = (User) userDAO.getByName(userName);
+            if (user != null) {
+                ShoppingCart cart = user.getShoppingCarts();
+                if (cart == null) {
+                    cart = new ShoppingCart();
+                    cart.setUser(user);
+                    user.setShoppingCarts(cart);
+
+                    // Save to the database
+                    shoppingCartRepository.save(cart);
+                    userRepository.save(user);
+                }
+
+                // Add product to the cart
+                Product product = (Product) productDAO.get(Long.parseLong(productId));
+
+                // Check if the product is already in the cart
+                ShoppingCartProduct existingProduct = findProductInCart(cart, product);
+
+                if (existingProduct != null) {
+                    // If the product is already in the cart, increment the quantity
+                    System.out.println("Product already in the cart");
+                    updateProductQuantityAndTotalPrice(product, cart, existingProduct.getQuantity() + quantity, calculateTotalPrice(product, existingProduct.getQuantity() + quantity));
+                } else {
+                    System.out.println("Product not in the cart");
+                    // If the product is not in the cart, create a new ShoppingCartProduct entry
+                    ShoppingCartProduct newProduct = new ShoppingCartProduct(cart, product, quantity, product.getPrice());
+                    shoppingCartProductRepository.save(newProduct);
+                }
+                //update value in the session
+                HttpSession session = request.getSession();
+                Integer oldTotalQuantity = (Integer) session.getAttribute("totalQuantity");
+                System.out.println("oldTotalQuantity: "+ oldTotalQuantity);
+                session.setAttribute("totalQuantity", oldTotalQuantity + quantity);
+
+                return new Response<>(200, "Product added to cart successfully");
+            } else {
+                return new Response<>(404, "User not found");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Response<>(500, "Internal Server Error");
+        }
+    }
+
+
+
+    // Helper method to find a product in the cart
+    public ShoppingCartProduct findProductInCart(ShoppingCart cart, Product product) {
+        Long cartId = cart.getId();
+        Long productId = product.getId();
+        return shoppingCartProductRepository.findProductInCart(cartId, productId);
+    }
+
+    public void updateProductQuantityAndTotalPrice(Product product,ShoppingCart cart, int newQuantity, double newTotalPrice) {
+        shoppingCartProductRepository.updateQuantityAndTotalPrice(product,cart, newQuantity, newTotalPrice);
+    }
+
+    private double calculateTotalPrice(Product product, int quantity) {
+        // Add your calculation logic here
+        return product.getPrice() * quantity;
+    }
+
+
 
 
 }

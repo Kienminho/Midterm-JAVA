@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
 
 @Getter
 @Entity
@@ -20,8 +19,7 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "order")
-    private List<Product> products;
+
 
     public void setId(Long id) {
         this.id = id;
@@ -31,7 +29,5 @@ public class Order {
         this.user = user;
     }
 
-    public void setProducts(List<Product> products) {
-        this.products = products;
-    }
+
 }

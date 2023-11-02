@@ -13,7 +13,7 @@ public interface Repository <T, K>{
     T get(K id);
     List<T> getListSearch(String keyword);
     boolean deleteById(K id);
-    T getByName(K name);
+    T getByName(String name);
     boolean update(T item);
 
 }

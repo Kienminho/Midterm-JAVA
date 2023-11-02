@@ -1853,3 +1853,19 @@ del {
     background: #939b50;
     border-color: #939b50;
 }
+
+/*edit*/
+
+.cart-count {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: #939b50;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 20px;
+}

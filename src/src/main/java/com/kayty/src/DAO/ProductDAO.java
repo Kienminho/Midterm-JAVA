@@ -1,7 +1,7 @@
 package com.kayty.src.DAO;
 
 import com.kayty.src.Model.Product;
-import com.kayty.src.Model.User;
+
 import com.kayty.src.Repository.ProductRepository;
 import com.kayty.src.Repository.Repository;
 import jakarta.persistence.EntityManager;
@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import jakarta.persistence.Query;
 import java.util.List;
-import java.util.Optional;
+
 
 @org.springframework.stereotype.Repository
 public class ProductDAO implements Repository {
@@ -96,7 +96,7 @@ public class ProductDAO implements Repository {
     }
 
     @Override
-    public Object getByName(Object name) {
+    public Object getByName(String name) {
         return null;
     }
 

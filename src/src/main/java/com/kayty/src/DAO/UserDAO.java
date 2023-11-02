@@ -4,8 +4,10 @@ import com.kayty.src.Model.User;
 import com.kayty.src.Repository.Repository;
 import com.kayty.src.Repository.UserRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -13,10 +15,11 @@ import java.util.List;
 public class UserDAO implements Repository {
     @PersistenceContext
     private EntityManager entityManager;
-    private static UserRepository userRepository;
+    @Autowired
+    private  UserRepository userRepository;
 
 
-    private final String GET_USER_BY_NAME = "SELECT NEW com.kayty.src.Model.User(u.username, u.password) FROM User u WHERE u.username = :username";
+    private final String GET_USER_BY_NAME = "SELECT u FROM User u WHERE u.username = :username";
 
     @Override
     public Object add(Object item) {
@@ -40,19 +43,25 @@ public class UserDAO implements Repository {
     }
 
     @Override
-    public Object getByName(Object name) {
+    public Object getByName(String name) {
         Query query = entityManager.createQuery(GET_USER_BY_NAME);
-        query.setParameter("username", (String) name);
+        query.setParameter("username", name);
+
         try {
             User user = (User) query.getSingleResult();
 
-            System.out.println(user.getUsername());
-            return (User) query.getSingleResult();
-        }
-        catch (Exception e) {
-            return  null;
+            return user;
+        } catch (NoResultException e) {
+            // Handle the case where no user is found
+            System.out.println("User not found for username: " + name);
+            return null;  // or throw a custom exception if needed
+        } catch (Exception e) {
+            // Log or handle other exceptions
+            e.printStackTrace();
+            throw new RuntimeException("Error retrieving user by name", e);
         }
     }
+
 
     @Override
     public boolean update(Object item) {
