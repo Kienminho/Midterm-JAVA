@@ -161,7 +161,6 @@ public class ProductAPIController {
                 //update value in the session
                 HttpSession session = request.getSession();
                 Integer oldTotalQuantity = (Integer) session.getAttribute("totalQuantity");
-                System.out.println("oldTotalQuantity: "+ oldTotalQuantity);
                 session.setAttribute("totalQuantity", oldTotalQuantity + quantity);
 
                 return new Response<>(200, "Product added to cart successfully");

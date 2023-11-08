@@ -58,25 +58,26 @@
                                 <th><i class="fa fa-close icon_dell_cart"></i></th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <tr th:each="p : ${listProduct}">
-                                <td>
-                                    <a href="" class="img_prod_cart"><img class="w_100" th:src="${p.product.getImageUrl()}" alt=""/></a>
-                                </td>
-                                <td><a href="" class="name_prod_cart" th:text="${p.product.getProductName()}"></a></td>
-                                <td><div class="price_prod_cart" th:text="${p.product.getPrice()}+ đ"></div></td>
-                                <td>
-                                    <div class="pro-qty">
-                                        <span class="dec qtybtn">
-                                            <i class="zmdi zmdi-minus">-</i>
-                                        </span>
-                                        <input th:value="${p.getQuantity()}" name="qtybutton" class="cart-plus-minus-box" type="text">
-                                        <span class="inc qtybtn"><i class="zmdi zmdi-plus">+</i></span>
-                                    </div>
-                                </td>
-                                <td><div class="plus_price_cart" th:text="${p.getTotalPrice()} + đ"></div></td>
-                                <td><i class="fa fa-close icon_dell_cart"></i></td>
-                            </tr>
+                            <tbody class="tbody">
+                                <tr th:each="p : ${listProduct}">
+                                    <td>
+                                    <span class="product-id" hidden th:text="${p.product.id}"></span>
+                                        <a href="" class="img_prod_cart"><img class="w_100" th:src="${p.product.getImageUrl()}" alt=""/></a>
+                                    </td>
+                                    <td><a href="" class="name_prod_cart" th:text="${p.product.getProductName()}"></a></td>
+                                    <td><div class="price_prod_cart" th:text="${p.product.getPrice()}+ đ"></div></td>
+                                    <td>
+                                        <div class="pro-qty">
+                                            <span class="dec qtybtn" disabled onclick="updateQuantity(this, -1)">
+                                                <i class="minus zmdi zmdi-minus">-</i>
+                                            </span>
+                                            <input th:value="${p.getQuantity()}" name="qtybutton" class="cart-plus-minus-box" type="text">
+                                            <span class="inc qtybtn" disabled onclick="updateQuantity(this, 1)"><i class="zmdi zmdi-plus">+</i></span>
+                                        </div>
+                                    </td>
+                                    <td><div class="plus_price_cart" th:text="${p.getTotalPrice()} + đ"></div></td>
+                                    <td><i class="fa fa-close icon_dell_cart" onclick="deleteProduct(this)"></i></td>
+                                </tr>
                             </tbody>
                         </table>
                         <script src="js/input_cart.js"></script>
@@ -106,7 +107,7 @@
                             </ul>
                             <div class="clearfix"></div>
                             <div class="bottom_box_plus_price">
-                                <button class="butt_price_p_c">THANH TOÁN</button>
+                                <button onclick="goToPay()" class="butt_price_p_c">THANH TOÁN</button>
                             </div>
                         </div>
                     </div>

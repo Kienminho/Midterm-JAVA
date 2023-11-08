@@ -25,7 +25,8 @@ public class ShoppingCartProductDAO  {
     @Autowired
     private HttpServletRequest req;
     private static String SELECT_PRODUCT_IN_CART = "SELECT p FROM ShoppingCartProduct p WHERE p.shoppingCart.id = :cartId";
-
+    private static String UPDATE_QUANTITY = "UPDATE ShoppingCartProduct p SET p.quantity = p.quantity + :newUpdate, p.totalPrice = :newPrice WHERE p.shoppingCart.id = :cartId AND p.product.id = : productId";
+    private  static String DELETE_PRODUCT = "DELETE FROM ShoppingCartProduct p WHERE p.shoppingCart.id = :cartId AND p.product.id = : productId";
     @Transactional
     public int getQuantityInCart (ShoppingCart shoppingCart) {
         Query query = entityManager.createQuery(SELECT_PRODUCT_IN_CART)
@@ -54,6 +55,26 @@ public class ShoppingCartProductDAO  {
                 .sum();*/
 
         return productsInCart;
+    }
+
+    @Transactional
+    public boolean updateQuantity(ShoppingCart shoppingCart, int newQuantity, int newPrice, Long productId) {
+        Query query = entityManager.createQuery(UPDATE_QUANTITY)
+                .setParameter("cartId", shoppingCart.getId())
+                .setParameter("newUpdate", newQuantity)
+                .setParameter("newPrice", newPrice)
+                .setParameter("productId", productId);
+
+        return query.executeUpdate() > 0;
+    }
+
+    @Transactional
+    public boolean deleteProduct(ShoppingCart shoppingCart, Long productId) {
+        Query query = entityManager.createQuery(DELETE_PRODUCT)
+                .setParameter("cartId", shoppingCart.getId())
+                .setParameter("productId", productId);
+
+        return query.executeUpdate() > 0;
     }
 
 

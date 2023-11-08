@@ -58,8 +58,8 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .formLogin((form) -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/auth/authorization", true)
                         .failureUrl("/auth/login?error")
-                        .defaultSuccessUrl("/auth/authorization")
 
                         .permitAll()
                 )

@@ -3,6 +3,7 @@ package com.kayty.src.Controller;
 import com.kayty.src.DAO.ShoppingCartDAO;
 import com.kayty.src.DAO.ShoppingCartProductDAO;
 import com.kayty.src.DAO.UserDAO;
+import com.kayty.src.Helps.Utils;
 import com.kayty.src.Model.Role;
 import com.kayty.src.Model.ShoppingCart;
 import com.kayty.src.Model.ShoppingCartProduct;
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.util.Collection;
-import java.util.stream.StreamSupport;
+
 
 
 @Controller
@@ -87,9 +88,12 @@ public class AuthController {
             // Chuyển hướng đến trang quản trị cho vai trò ADMIN
             return "redirect:/admin";
         } else {
+
             User user = (User) userDAO.getByName(name);
+            Utils.userLogin = user;
             ShoppingCart sp = shoppingCartDAO.shoppingCartOfUser(user.getId());
 
+            Utils.shoppingCart = sp;
             // total quantity
             int totalQuantity = shoppingCartProductDAO.getQuantityInCart(sp);
 
@@ -104,7 +108,7 @@ public class AuthController {
     //xử lý lỗi
     @GetMapping("/error")
     public String handleError() {
-        return "error";
+        return "redirect:/home";
     }
 }
 
