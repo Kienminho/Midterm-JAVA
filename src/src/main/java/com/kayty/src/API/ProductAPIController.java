@@ -8,6 +8,7 @@ import com.kayty.src.Model.Product;
 import com.kayty.src.Model.ShoppingCart;
 import com.kayty.src.Model.ShoppingCartProduct;
 import com.kayty.src.Model.User;
+import com.kayty.src.Repository.ProductRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import com.kayty.src.Repository.ShoppingCartProductRepository;
 import com.kayty.src.Repository.ShoppingCartRepository;
@@ -15,8 +16,15 @@ import com.kayty.src.Repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import java.util.stream.Collectors;
@@ -25,7 +33,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/product")
 public class ProductAPIController {
     @Autowired
-    private  ProductDAO productDAO = new ProductDAO();
+    private  ProductDAO productDAO;
 
     @Autowired
     private  UserDAO userDAO;
@@ -36,14 +44,17 @@ public class ProductAPIController {
     @Autowired
     private ShoppingCartRepository shoppingCartRepository;
 
-//    @Autowired
-//    private ShoppingCartProductDAO shoppingCartProductDAO = new ShoppingCartProductDAO();
-
     @Autowired
     private ShoppingCartProductRepository shoppingCartProductRepository;
 
     @Autowired
     private HttpServletRequest request;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Value("${spring.servlet.multipart.location}")
+    private String uploadPath;
 
 
     @GetMapping("/get-bestsale-product")
@@ -172,6 +183,59 @@ public class ProductAPIController {
             return new Response<>(500, "Internal Server Error");
         }
     }
+
+    @GetMapping("/get-sub-category")
+    public Response<Object> getSubCategory(@RequestParam String category) {
+        List subCategories = productDAO.getSubCategory(category);
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("subCategory", subCategories);
+        return new Response<>(500, "Successfully", subCategories.size(), data);
+    }
+
+    //add product
+    @PostMapping("/add-product")
+    public Response<Object> addProduct(@ModelAttribute Product product,
+                                       @RequestParam("product_image") MultipartFile image) {
+        if (!image.isEmpty()) {
+            String imageName = "/"+ product.getProductName() + ".jpg";
+            String imagePath = uploadPath+ imageName;
+            File f = new File(uploadPath);
+            if(!f.exists()) {
+                f.mkdir();
+            }
+
+            try {
+                // Save image to the specified path
+                Files.copy(image.getInputStream(), Paths.get(imagePath));
+                //Files.write(Paths.get(uploadPath, imageName), image.getBytes());
+
+                // Set the image path as the product's urlImage
+                product.setImageUrl(imageName);
+
+                // Save product to the database
+                productRepository.save(product);
+
+                return new Response<>(200, "Successfully", 0, null);
+            } catch (IOException e) {
+                e.printStackTrace(); // Handle the exception appropriately
+                return new Response<>(500, "Error saving image", 0, null);
+            }
+        } else {
+            // Handle the case when no image is provided
+            return new Response<>(400, "Image is required", 0, null);
+        }
+    }
+
+    @GetMapping("/delete/{productId}")
+    public Response<Object> deleteProduct(@PathVariable Long productId) {
+        try {
+            productRepository.deleteById(productId);
+            return new Response<>(200, "Successfully", 0, null);
+        } catch (Exception e) {
+            return new Response<>(305, "Error", 0, null);
+        }
+    }
+
 
 
 

@@ -23,49 +23,98 @@
     <div class="row rounded border p-3">
         <div class="col-md-4">
             <h4 class="text-success">Thêm sản phẩm mới</h4>
-            <form id="from-add-product" class="mt-3" >
+            <form action="api/product/add-product" method="post" id="from-add-product" class="mt-3" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="product-name">Tên sản phẩm</label>
-                    <input class="form-control" type="text" placeholder="Nhập tên sản phẩm" id="product-name" name="name">
+                    <input class="form-control" type="text" placeholder="Nhập tên sản phẩm" id="product-name" name="productName">
                 </div>
+                <input type="hidden" class="csrf" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <div class="form-group">
                     <label for="price">Giá sản phẩm</label>
                     <input class="form-control" type="number" placeholder="Nhập giá bán" id="price" name="price">
                 </div>
+
                 <div class="form-group">
-                    <button class="btn btn-success mr-2" type="button" onclick="addProduct()">Thêm sản phẩm</button>
+                    <label for="category">Danh mục</label>
+                    <select class="form-control" id="category" name="category">
+                        <!-- Add options dynamically based on your categories -->
+                        <option value="Bánh kem">Bánh kem</option>
+                        <option value="Bánh khô">Bánh khô</option>
+                        <option value="Bánh mỳ">Bánh mỳ</option>
+                        <option value="Bánh ngọt">Bánh ngọt</option>
+                        <option value="Bánh theo mùa">Bánh theo mùa</option>
+                        <option value="Bánh tráng miệng">Bánh tráng miệng</option>
+                        <option value="Bánh đông lạnh">Bánh đông lạnh</option>
+                        <!-- Add more options as needed -->
+                    </select>
                 </div>
 
-                <div id="message" class="d-none alert alert-danger">
-                    Vui lòng nhập tên sản phẩm
+                <div class="form-group">
+                    <label for="product-images">Ảnh sản phẩm</label>
+                    <input type="file" class="form-control-file" id="product-images" name="product_image" accept="image/*" multiple>
+                </div>
+
+                <div class="form-group">
+                    <label for="sub-category">Danh mục con</label>
+                    <select class="form-control" id="sub-category" name="subCategory">
+                        <option value="Bánh cho trẻ em">Bánh cho trẻ em</option>
+                        <option value="Bánh kem đặt trước">Bánh kem đặt trước</option>
+                        <option value="Bánh sinh nhật">Bánh sinh nhật</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="size">Kích thước</label>
+                    <select class="form-control" id="size" name="size">
+                        <option value="M">Size M</option>
+                        <option value="L">Size L</option>
+                        <option value="S">Size S</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <button type="button" class="btn-add-product btn btn-success mr-2" >Thêm sản phẩm</button>
                 </div>
             </form>
+
         </div>
         <div class="col-md-8">
             <h4 class="text-success">Danh sách sản phẩm</h4>
-            <p>Chọn một sản phẩm cụ thể để xem chi tiết</p>
+            <p>Tìm kiếm sản phẩm</p>
+            <input type="text" class="form-control">
             <table class="table table-striped">
                 <thead>
                 <tr>
                     <th>STT</th>
+                    <th>Ảnh</th>
                     <th>Tên sản phẩm</th>
                     <th>Giá</th>
+                    <th>Danh mục</th>
+                    <th>Danh mục con</th>
                     <th>Thao tác</th>
                 </tr>
                 </thead>
                 <tbody id="tbody">
-                <c:forEach var="product" items="${requestScope.list}">
-                    <tr>
-                        <td>${product.productId}</td>
-                        <td>${product.productName}</td>
-                        <td>${product.price}</td>
+
+                    <tr th:each="product : ${products}">
+                        <td class="id" th:text = "${product.getId()}"></td>
                         <td>
-                            <a href="home/delete-product?id=${product.productId}" data-toggle="modal" data-target="#confirmDeleteModal" onclick="confirmDelete(${product.productId})">Xóa</a>
+                            <!-- Assuming 'image' is the field for image path in your Product class -->
+                            <img th:src="${product.getImageUrl()}" alt="Product Image" style="max-width: 100px; max-height: 100px;">
+                        </td>
+                        <td th:text ="${product.productName}"></td>
+                        <td th:text="${product.price}+ đ"></td>
+
+                        <td th:text="${product.category}"></td>
+                        <td th:text="${product.subCategory}"></td>
+                        <td>
+                            <a href="" data-toggle="modal" data-target="#confirmDeleteModal" onclick="confirmDelete(this)">Xóa  |</a>
+                            <a href="">Sửa</a>
                         </td>
                     </tr>
-                </c:forEach>
                 </tbody>
             </table>
+
         </div>
     </div>
 </div>
@@ -85,12 +134,12 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                <button type="button" class="btn btn-danger" onclick="deleteProduct()">Xoá</button>
+                <button type="button" class="btn btn-danger" onclick="removeProduct()">Xoá</button>
             </div>
         </div>
     </div>
 </div>
 
 </body>
-
+<script src = "/assets/js/Adela/admin.js"></script>
 </html>

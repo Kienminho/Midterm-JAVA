@@ -83,6 +83,16 @@ public class Product {
         this.size = size;
     }
 
+    public Product(String productName, String imageUrl, String category,String subCategory, double price, String size) {
+
+        this.productName = productName;
+        this.imageUrl = imageUrl;
+        this.category = category;
+        this.subCategory = subCategory;
+        this.price = price;
+        this.size = size;
+    }
+
     public String toString() {
 
         return "Product[ "+ this.id+ ", "+this.productName+", "+this.category+", "+ this.subCategory+", "+this.price+"]";
