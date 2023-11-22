@@ -56,6 +56,14 @@ public class ProductAPIController {
     @Value("${spring.servlet.multipart.location}")
     private String uploadPath;
 
+    @GetMapping("/getProducts")
+    public Response<List<Product>> getAll()
+    {
+        List<Product> products = productRepository.findAll();
+        Map<String, List<Product>> data = new HashMap<>();
+        data.put("list", products);
+        return new Response<>(200, "Successful", products.size(), data);
+    }
 
     @GetMapping("/get-bestsale-product")
     public Response<List<Product>> getBestSaleProduct() {
@@ -197,7 +205,7 @@ public class ProductAPIController {
     public Response<Object> addProduct(@ModelAttribute Product product,
                                        @RequestParam("product_image") MultipartFile image) {
         if (!image.isEmpty()) {
-            String imageName = "/"+ product.getProductName() + ".jpg";
+            String imageName = product.getProductName() + ".jpg";
             String imagePath = uploadPath+ imageName;
             File f = new File(uploadPath);
             if(!f.exists()) {
@@ -210,7 +218,7 @@ public class ProductAPIController {
                 //Files.write(Paths.get(uploadPath, imageName), image.getBytes());
 
                 // Set the image path as the product's urlImage
-                product.setImageUrl(imageName);
+                product.setImageUrl("/images/"+imageName);
 
                 // Save product to the database
                 productRepository.save(product);
@@ -236,8 +244,27 @@ public class ProductAPIController {
         }
     }
 
+    @PostMapping("/update")
+    public Response<Object> updateProduct(@RequestBody Product p) {
+        try {
+            Product product = productRepository.getReferenceById(p.getId());
+            product.setProductName(p.getProductName());
+            product.setPrice(p.getPrice());
+            product.setSize(p.getSize());
+            if(p.getCategory() != null)
+            {
+                p.setCategory(p.getCategory());
+                p.setSubCategory(p.getSubCategory());
+            }
+            productRepository.save(product);
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            return new Response<>(305, "Error in line 254 ProductAPI", 0, null);
+        }
 
-
+        return new Response<>(200, "Successfully", 0, null);
+    }
 
     // Helper method to find a product in the cart
     public ShoppingCartProduct findProductInCart(ShoppingCart cart, Product product) {

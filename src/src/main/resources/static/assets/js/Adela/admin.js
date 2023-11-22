@@ -1,4 +1,12 @@
 let id;
+const tbody = $("#tbody")
+
+fetch("/api/product/getProducts")
+    .then(response => response.json())
+    .then(data => {
+        displayProduct(data.data.list);
+    })
+    .catch(err => console.log(err));
 
 $('#category').on('change', function () {
     // Get the selected category value
@@ -13,10 +21,8 @@ $('#category').on('change', function () {
             // Update the sub-category select options
             let subCategories = response.data.subCategory;
             let subCategorySelect = $('#sub-category');
-
             // Clear existing options
             subCategorySelect.empty();
-
             // Add new options based on the API response
             $.each(subCategories, function (index, subCategory) {
                 subCategorySelect.append('<option value="' + subCategory + '">' + subCategory + '</option>');
@@ -31,6 +37,7 @@ $('#category').on('change', function () {
 
 //add product
 $(".btn-add-product").on('click', () => {
+    console.log(34)
     if(validateForm()) {
         let form = document.getElementById("from-add-product");
         let formData = new FormData(form);
@@ -69,6 +76,56 @@ function removeProduct() {
         }
     });
 }
+
+function goToUpdate(element) {
+    event.preventDefault();
+    const tr = $(element).closest("tr");
+    const idUpdate = tr.find(".id").text();
+    id = idUpdate;
+    $("#product-name").val(tr.find(".name").text());
+    $("#price").val(parseInt(tr.find(".price").text().replace("đ", "")));
+    $("#size").val(tr.find(".size").text());
+    $(".btn-add-product").addClass("d-none");
+    $(".update-product").removeClass("d-none");
+}
+
+//handle update
+$(".update-product").on("click", () => {
+    const data = {
+        id: id,
+        productName: $("#product-name").val(),
+        price: $("#price").val(),
+        size: $("#size").val(),
+
+    };
+    const category = $("#category").val();
+    const subCategory = $("#sub-category").val();
+    if(category !== "Bánh kem" && subCategory !== "Bánh cho trẻ em") {
+        data.category = category;
+        data.subCategory = subCategory;
+    }
+
+    fetch("/api/product/update", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': $(".csrf").val(),
+        },
+        body: JSON.stringify(data),
+    })
+        .then(res => res.json())
+        .then(data => {
+            if(data.statusCode === 200)
+            {
+                location.reload();
+                $(".btn-add-product").removeClass("d-none");
+                $(".update-product").addClass("d-none");
+            }
+
+        })
+        .catch(err => console.log(err))
+
+});
 function validateForm() {
     var productName = document.getElementById("product-name").value;
     var price = document.getElementById("price").value;
@@ -116,6 +173,48 @@ function validateForm() {
     return true;
 }
 
+//search
+$("#search").on("input", ()=> {
+    let inputValue = $("#search").val();
+    $.ajax({
+        type: "GET",
+        url: `/api/product/get-list-search?keywords=${inputValue}`,
+        contentType: "application/json; charset=utf-8",
+        success: function (data) {
+            // Xử lý dữ liệu trả về ở đây
+            displayProduct(data.data.listSearch);
+        },
+        error: function (error) {
+            // Xử lý lỗi nếu có
+            console.error("Error:", error);
+        }
+    });
+})
+
 function showMessage(message) {
     alert(message);
+}
+
+function displayProduct(list) {
+    tbody.empty();
+    list.map(p => {
+        const html =`<tr>
+                        <td class="id">${p.id}</td>
+                        <td>
+                            <!-- Assuming 'image' is the field for image path in your Product class -->
+                            <img src="${p.imageUrl}" alt="Product Image" style="max-width: 100px; max-height: 100px;">
+                        </td>
+                        <td class="name" >${p.productName}</td>
+                        <td class="size">${p.size}</td>
+                        <td class="price" > ${p.price} đ</td>
+
+                        <td class="category">${p.category}</td>
+                        <td class="sub-category">${p.subCategory}</td>
+                        <td>
+                            <a href="" data-toggle="modal" data-target="#confirmDeleteModal" onclick="confirmDelete(this)">Xóa  |</a>
+                            <a href="" onclick="goToUpdate(this)">Sửa</a>
+                        </td>
+                    </tr>`
+        tbody.append(html);
+    })
 }
