@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.stream.StreamSupport;
 
 
@@ -44,11 +45,11 @@ public class ShoppingCartProductDAO  {
 
 
     @Transactional
-    public Iterable<ShoppingCartProduct> getProductInCart (ShoppingCart shoppingCart) {
+    public List<ShoppingCartProduct> getProductInCart (ShoppingCart shoppingCart) {
         Query query = entityManager.createQuery(SELECT_PRODUCT_IN_CART)
                 .setParameter("cartId", shoppingCart.getId());
 
-        Iterable<ShoppingCartProduct> productsInCart = query.getResultList();
+        List<ShoppingCartProduct> productsInCart = query.getResultList();
 
         /*int totalQuantity = StreamSupport.stream(productsInCart.spliterator(), false)
                 .mapToInt(ShoppingCartProduct::getQuantity)
