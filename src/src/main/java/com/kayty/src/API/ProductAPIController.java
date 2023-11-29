@@ -1,7 +1,6 @@
 package com.kayty.src.API;
 
 import com.kayty.src.DAO.ProductDAO;
-import com.kayty.src.DAO.ShoppingCartProductDAO;
 import com.kayty.src.DAO.UserDAO;
 import com.kayty.src.Helps.Response;
 import com.kayty.src.Model.Product;

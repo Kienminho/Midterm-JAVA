@@ -1,10 +1,12 @@
 package com.kayty.src.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 
 @Getter
 @Setter
@@ -18,6 +20,7 @@ public class ShoppingCartProduct {
     @Id
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "shopping_cart_id")
     private ShoppingCart shoppingCart;
