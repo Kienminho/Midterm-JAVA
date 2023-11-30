@@ -1,0 +1,223 @@
+{
+	"info": {
+		"_postman_id": "8c9eac75-227f-41e9-b48b-a6b29ba3abd0",
+		"name": "API MidTerm CN_Java",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "26077128"
+	},
+	"item": [
+		{
+			"name": "Get all products",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{baseUrl}}/api/product/getProducts"
+			},
+			"response": []
+		},
+		{
+			"name": "Add product",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "productName",
+							"value": "Bánh mỳ nướng",
+							"type": "text"
+						},
+						{
+							"key": "_csrf",
+							"value": "JnwPPgObDmWRKVURIjyzmpJTs2KUlC_I6_lUk8YJh3DsMMeBQkg2XTutOQG8TG1wQBGHovBqngP39UrliZw1p_Nt5kiOAvPl",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "price",
+							"value": "230000",
+							"type": "text"
+						},
+						{
+							"key": "category",
+							"value": "Bánh mỳ",
+							"type": "text"
+						},
+						{
+							"key": "product_image",
+							"type": "file",
+							"src": "/C:/Users/kienl/Downloads/6.png"
+						},
+						{
+							"key": "subCategory",
+							"value": "Bánh mì baguette",
+							"type": "text"
+						},
+						{
+							"key": "size",
+							"value": "M",
+							"type": "text"
+						}
+					]
+				},
+				"url": "{{baseUrl}}/api/product/add-product"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete product",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{baseUrl}}/api/product/delete/145"
+			},
+			"response": []
+		},
+		{
+			"name": "Update product",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"147\",\r\n    \"productName\": \"Bánh mì nướng\",\r\n    \"price\": \"30000\",\r\n    \"size\": \"M\",\r\n    \"category\": \"Bánh mỳ\",\r\n    \"subCategory\": \"Bánh mì ngọt\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{baseUrl}}/api/product/update"
+			},
+			"response": []
+		},
+		{
+			"name": "Add produc to shopping cart",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"idProduct\": \"25\",\r\n    \"userName\": \"Dev\",\r\n    \"quantity\": \"1\"\r\n}"
+				},
+				"url": "{{baseUrl}}/api/product/add-product-to-cart"
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "Dev",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "12345",
+							"type": "text"
+						}
+					]
+				},
+				"url": "{{baseUrl}}/login"
+			},
+			"response": []
+		},
+		{
+			"name": "Update quantity of product in shopping cart",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"productId\": 25,\r\n    \"newQuantity\": -1,\r\n    \"newPrice\": 126000\r\n}"
+				},
+				"url": "{{baseUrl}}/api/order/update-quantity"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete product in shopping cart",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"productId\": 21,\r\n    \"quantityProductDeleted\": 1\r\n}"
+				},
+				"url": "{{baseUrl}}/api/order/delete-product",
+				"description": "Edit productId and quantityProductDeleted is displayed on the shopping cart screen"
+			},
+			"response": []
+		},
+		{
+			"name": "Get order of user",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{baseUrl}}/api/order/get-products-orders"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}
