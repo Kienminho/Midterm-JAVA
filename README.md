@@ -54,6 +54,8 @@
  ![Delete order](./ScreenshortAPI/DeleteProductInShoppingCart.png)
 
 ## 4.Implementation instructions
+- User available: Messi : 12345, admin : admin, Dev : 12345
+- Link video demo: https://youtu.be/8JLwleYyXfY
 - Step 1: Clone the source code using the command:
 ```bash
 git clone https://github.com/Kienminho/Midterm-JAVA.git
